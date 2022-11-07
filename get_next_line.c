@@ -6,7 +6,7 @@
 /*   By: aharrass <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 22:42:25 by aharrass          #+#    #+#             */
-/*   Updated: 2022/11/06 11:41:49 by aharrass         ###   ########.fr       */
+/*   Updated: 2022/11/07 17:44:45 by aharrass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,21 +21,21 @@ char	*ft_read(int fd, char *hold)
 	buf = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buf)
 		return (NULL);
-	while (!is_nl(hold) && rd)
+	while (!ft_strchr(hold, '\n') && rd)
 	{
 		rd = read(fd, buf, BUFFER_SIZE);
-		if (rd < 0)
+		if (rd == -1)
 		{
-			free (hold);
 			free (buf);
+			free (hold);
 			return (NULL);
 		}
 		buf[rd] = 0;
 		hold = ft_strjoin(hold, buf);
 		if (!hold)
 			return (NULL);
-		free (buf);
 	}
+	free (buf);
 	return (hold);
 }
 
@@ -47,16 +47,13 @@ char	*ft_get_line(char *hold)
 
 	i = 0;
 	j = 0;
+	if (!ft_strlen(hold))
+		return (NULL);
 	while (hold[i] && hold[i] != '\n')
 		i++;
-	if (hold[i] == '\n')
-		i++;
-	line = malloc(sizeof(char) * (i + 1));
+	line = malloc(sizeof(char) * (i + 2));
 	if (!line)
-	{
-		free (hold);
 		return (NULL);
-	}
 	while (j <= i && hold[j])
 	{
 		line[j] = hold[j];
@@ -81,9 +78,13 @@ char	*ft_clean(char *hold)
 		free (hold);
 		return (NULL);
 	}
+	i++;
 	n_hold = malloc(sizeof (char) * (ft_strlen(hold) - i + 1));
 	if (!n_hold)
+	{
+		free (hold);
 		return (NULL);
+	}
 	while (hold[i])
 		n_hold[j++] = hold[i++];
 	n_hold[j] = 0;
@@ -98,7 +99,7 @@ char	*get_next_line(int fd)
 	int			i;
 
 	i = 0;
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &hold, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, hold, 0) < 0)
 		return (NULL);
 	hold = ft_read(fd, hold);
 	if (!hold)
@@ -107,17 +108,42 @@ char	*get_next_line(int fd)
 	hold = ft_clean(hold);
 	return (line);
 }
-
+ 
+#include <stdio.h>
 int main()
 {
 	int	fd;
 
 	fd = open("test.txt", O_RDONLY);
-	while (1)
+		char *s = get_next_line(fd);
+
+	// while(s)
+	// {
+			printf("%s", s);
+			free(s);
+			s = get_next_line(fd);
+			printf("%s", s);
+			free (s);
+			s = get_next_line(fd);
+	//}
+	close (fd);
+	char *temp = get_next_line(fd);
+	while(temp)
 	{
-		printf("\n%s", get_next_line(fd));
-		if (!get_next_line(fd))
-			break;
+		free (temp);
+		temp = get_next_line(fd);
 	}
+	fd = open("test.txt", O_RDONLY);
+	s = get_next_line(fd);
+	while (s)
+	{
+		printf("%s", s);
+		free(s);
+		s = get_next_line(fd);
+	}
+	s = get_next_line(fd);
+	printf("\n%s", s);
+	free (s);
+	//system("leaks a.out");
 	return (0);
 }
