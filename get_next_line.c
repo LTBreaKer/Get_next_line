@@ -6,7 +6,7 @@
 /*   By: aharrass <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 22:42:25 by aharrass          #+#    #+#             */
-/*   Updated: 2022/11/07 17:44:45 by aharrass         ###   ########.fr       */
+/*   Updated: 2022/11/07 18:20:37 by aharrass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ char	*get_next_line(int fd)
 	int			i;
 
 	i = 0;
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, hold, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
 		return (NULL);
 	hold = ft_read(fd, hold);
 	if (!hold)
@@ -107,43 +107,4 @@ char	*get_next_line(int fd)
 	line = ft_get_line(hold);
 	hold = ft_clean(hold);
 	return (line);
-}
- 
-#include <stdio.h>
-int main()
-{
-	int	fd;
-
-	fd = open("test.txt", O_RDONLY);
-		char *s = get_next_line(fd);
-
-	// while(s)
-	// {
-			printf("%s", s);
-			free(s);
-			s = get_next_line(fd);
-			printf("%s", s);
-			free (s);
-			s = get_next_line(fd);
-	//}
-	close (fd);
-	char *temp = get_next_line(fd);
-	while(temp)
-	{
-		free (temp);
-		temp = get_next_line(fd);
-	}
-	fd = open("test.txt", O_RDONLY);
-	s = get_next_line(fd);
-	while (s)
-	{
-		printf("%s", s);
-		free(s);
-		s = get_next_line(fd);
-	}
-	s = get_next_line(fd);
-	printf("\n%s", s);
-	free (s);
-	//system("leaks a.out");
-	return (0);
 }
