@@ -6,7 +6,7 @@
 /*   By: aharrass <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/04 22:42:25 by aharrass          #+#    #+#             */
-/*   Updated: 2022/11/07 18:20:37 by aharrass         ###   ########.fr       */
+/*   Updated: 2022/11/08 15:04:41 by aharrass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,10 @@ char	*ft_get_line(char *hold)
 		return (NULL);
 	while (hold[i] && hold[i] != '\n')
 		i++;
-	line = malloc(sizeof(char) * (i + 2));
+	if (hold[i] == '\n')
+		line = malloc(sizeof(char) * (i + 2));
+	else
+		line = malloc(sizeof(char) * (i + 1));
 	if (!line)
 		return (NULL);
 	while (j <= i && hold[j])
